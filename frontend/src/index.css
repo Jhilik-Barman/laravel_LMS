@@ -1,31 +1,38 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Common Body Styling */
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background-color: #f4f6fd;
-  transition: background-color 0.3s ease;
+  color: #1f2937;
 }
 
-.dark body {
-  background-color: #290240;
+/* Keep Button Colors Controlled by Their Own CSS */
+button {
+  cursor: pointer;
 }
 
-/* Dark mode: force all text to a light color automatically */
-.dark, .dark * {
-  color: #f3f4f6 !important;
+/* Form Fields - Light Background and Dark Text */
+input,
+textarea,
+select {
+  color: #1f2937;
+  background-color: #ffffff;
 }
 
-/* Smooth transition for EVERY element's color, background, and border
-   whenever dark/light mode switches, or any hover/state change happens */
-*, *::before, *::after {
-  transition-property: background-color, border-color, color, box-shadow, opacity, transform;
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280;
+}
+
+/* Smooth Theme Transition */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color;
   transition-timing-function: ease;
   transition-duration: 0.25s;
-}
-
-/* Elements that should keep their own color even in dark mode */
-.dark .dark-keep-color {
-  color: inherit !important;
 }

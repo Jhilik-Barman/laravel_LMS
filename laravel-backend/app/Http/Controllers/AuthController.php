@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Otp;
 use App\Models\User;
+use App\Services\SplunkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    // ==========================================
-    // SEND OTP
-    // ==========================================
+    public function __construct(
+        private SplunkService $splunk
+    ) {
+
+    }                            
 
     public function sendOtp(Request $request)
     {
@@ -54,7 +57,15 @@ class AuthController extends Controller
                 );
             }
         );
-
+$this->splunk->send(
+    'INFO',
+    'OTP sent successfully',
+    [
+        'event' => 'OTP_SENT',
+        'email' => $email,
+        'ip' => $request->ip()
+    ]
+);
         return response()->json([
             'message' => 'OTP sent successfully',
         ]);
@@ -81,21 +92,44 @@ class AuthController extends Controller
             ->first();
 
         // OTP is incorrect
-        if (!$otpRecord) {
-            return response()->json([
-                'message' => 'Invalid OTP',
-            ], 422);
-        }
+if (!$otpRecord) {
+
+    $this->splunk->send(
+        'WARNING',
+        'Invalid OTP verification attempt',
+        [
+            'event' => 'OTP_VERIFY_FAILED',
+            'email' => $email,
+            'ip' => $request->ip(),
+            'reason' => 'invalid_otp'
+        ]
+    );
+
+    return response()->json([
+        'message' => 'Invalid OTP',
+    ], 422);
+}
 
         // Check OTP expiry
-        if (now()->greaterThan($otpRecord->expires_at)) {
+     if (now()->greaterThan($otpRecord->expires_at)) {
 
-            $otpRecord->delete();
+    $this->splunk->send(
+        'WARNING',
+        'OTP verification failed - OTP expired',
+        [
+            'event' => 'OTP_VERIFY_FAILED',
+            'email' => $email,
+            'ip' => $request->ip(),
+            'reason' => 'otp_expired'
+        ]
+    );
 
-            return response()->json([
-                'message' => 'OTP has expired',
-            ], 422);
-        }
+    $otpRecord->delete();
+
+    return response()->json([
+        'message' => 'OTP has expired',
+    ], 422);
+}
 
         // OTP is correct
         $otpRecord->delete();

@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+        'splunk' => [
+    'url' => env('SPLUNK_HEC_URL'),
+    'token' => env('SPLUNK_HEC_TOKEN'),
+    'index' => env('SPLUNK_INDEX', 'lms_logs'),
+    'sourcetype' => env('SPLUNK_SOURCETYPE', 'lms:app'),
+],
+    ];
 
-];
+
