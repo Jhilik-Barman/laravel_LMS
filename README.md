@@ -17,8 +17,10 @@ A full-stack Learning Management System built with Laravel for the backend and R
 - OTP login flow with email verification
 - New user registration with profile details
 - Existing user login and redirect to courses
-- Course listing page with enrollment option
+- Course listing page with single-course enrollment
+- Enrollment flow with a dedicated payment screen
 - User profile page with editable details
+- Profile photo upload and replacement
 - Session timeout warning and auto logout flow
 - Laravel API for authentication, users, and course management
 
@@ -104,6 +106,9 @@ Make sure the frontend API URL points to the Laravel backend:
 ```env
 VITE_API_URL=http://localhost:8000
 ```
+
+Profile photos are stored on Laravel's public disk. Create the public storage
+symlink after setting up the backend with `php artisan storage:link`.
 
 ## Notes
 

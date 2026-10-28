@@ -4,6 +4,10 @@
 @tailwind utilities;
 
 /* Common Body Styling */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background-color: #f4f6fd;

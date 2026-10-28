@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import SessionWarningModal from './components/SessionWarningModal'
@@ -13,14 +14,34 @@ import VerifyOtp from './pages/VerifyOtp'
 import Register from './pages/Register'
 import Courses from './pages/Courses'
 import Profile from './pages/Profile'
+import Payment from './pages/Payment'
+
+function ScrollToTop() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
+  }, [location.pathname])
+
+  return null
+}
 
 export default function App() {
   const { showWarning, secondsLeft, continueSession } = useSessionTimeout()
+  const location = useLocation()
+  const isPaymentPage = location.pathname.startsWith('/payment/')
 
   return (
     <>
-      <Navbar />
-      <SessionWarningModal visible={showWarning} secondsLeft={secondsLeft} onContinue={continueSession} />
+      <ScrollToTop />
+      {!isPaymentPage && <Navbar />}
+      {!isPaymentPage && (
+        <SessionWarningModal visible={showWarning} secondsLeft={secondsLeft} onContinue={continueSession} />
+      )}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -45,8 +66,16 @@ export default function App() {
             </RequireAuth>
           }
         />
+        <Route
+          path="/payment/:courseSlug"
+          element={
+            <RequireAuth>
+              <Payment />
+            </RequireAuth>
+          }
+        />
       </Routes>
-      <Footer />
+      {!isPaymentPage && <Footer />}
     </>
   )
 }

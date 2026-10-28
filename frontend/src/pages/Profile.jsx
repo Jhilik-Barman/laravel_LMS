@@ -13,23 +13,39 @@ export default function Profile() {
     phone: user?.phone || '',
   })
   const [saving, setSaving] = useState(false)
+  const [pictureSaving, setPictureSaving] = useState(false)
   const [error, setError] = useState('')
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handlePictureChange = (e) => {
-    const file = e.target.files[0]
+  const handlePictureChange = async (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
     if (!file) return
-    const reader = new FileReader()
-    reader.onloadend = async () => {
-      try {
-        const res = await api.put('/user/me', { profile_picture: reader.result })
-        setUser(res.data)
-      } catch (err) {
-        setError('Could not update picture')
-      }
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError('Choose a JPG, PNG, or WebP image.')
+      return
     }
-    reader.readAsDataURL(file)
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Profile photos must be 2 MB or smaller.')
+      return
+    }
+
+    setError('')
+    setPictureSaving(true)
+    const formData = new FormData()
+    formData.append('profile_picture', file)
+
+    try {
+      const res = await api.post('/user/profile-picture', formData)
+      setUser(res.data)
+    } catch (err) {
+      setError(err.response?.data?.errors?.profile_picture?.[0] || 'Could not update picture')
+    } finally {
+      setPictureSaving(false)
+    }
   }
 
   const handleSave = async (e) => {
@@ -60,8 +76,14 @@ export default function Profile() {
               className="w-24 h-24 rounded-full object-cover border"
             />
             <label className="absolute bottom-0 right-0 bg-brand-indigo text-white text-xs px-2 py-1 rounded-full cursor-pointer">
-              Edit
-              <input type="file" accept="image/*" className="hidden" onChange={handlePictureChange} />
+              {pictureSaving ? 'Uploading...' : 'Edit'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handlePictureChange}
+                disabled={pictureSaving}
+              />
             </label>
           </div>
           <div>
@@ -69,6 +91,8 @@ export default function Profile() {
             <p className="text-gray-500 text-sm">{user.email}</p>
           </div>
         </div>
+
+        {error && !editing && <p role="alert" className="mb-4 text-red-500 text-sm">{error}</p>}
 
         {!editing ? (
           <div className="space-y-3 text-sm">

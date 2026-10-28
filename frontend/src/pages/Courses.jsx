@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function Courses() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrollingSlug, setEnrollingSlug] = useState(null);
+  const [enrollError, setEnrollError] = useState("");
 
   const { user, isLoggedIn, setUser } = useAuth();
 
@@ -19,6 +22,7 @@ export default function Courses() {
   const handleEnroll = async (slug) => {
     if (!isLoggedIn) return;
 
+    setEnrollError("");
     setEnrollingSlug(slug);
 
     try {
@@ -28,7 +32,7 @@ export default function Courses() {
 
       setUser(res.data);
     } catch (err) {
-      alert(err.response?.data?.detail || "Could not enroll");
+      setEnrollError(err.response?.data?.message || "Could not enroll");
     } finally {
       setEnrollingSlug(null);
     }
@@ -36,6 +40,7 @@ export default function Courses() {
 
   const isEnrolled = (slug) =>
     user?.enrolled_courses?.includes(slug);
+  const hasEnrollment = (user?.enrolled_courses?.length ?? 0) > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
@@ -54,6 +59,12 @@ export default function Courses() {
         </p>
       </div>
 
+      {enrollError && (
+        <p role="alert" className="mb-6 text-center text-sm text-red-600">
+          {enrollError}
+        </p>
+      )}
+
       {/* Loading */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -68,6 +79,7 @@ export default function Courses() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.map((course) => {
             const enrolled = isEnrolled(course.slug);
+            const unavailable = hasEnrollment && !enrolled;
 
             return (
               <div
@@ -135,11 +147,14 @@ export default function Courses() {
                     onClick={() => handleEnroll(course.slug)}
                     disabled={
                       enrolled ||
-                      enrollingSlug === course.slug
+                      unavailable ||
+                      enrollingSlug !== null
                     }
-                    className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed ${
                       enrolled
-                        ? "bg-emerald-100 text-emerald-700 cursor-default"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : unavailable
+                        ? "bg-gray-100 text-gray-500"
                         : "bg-gradient-to-r from-[#440D70] to-indigo-600 text-white hover:opacity-90 hover:shadow-lg"
                     }`}
                   >
@@ -147,8 +162,20 @@ export default function Courses() {
                       ? "Enrolled ✓"
                       : enrollingSlug === course.slug
                       ? "Enrolling..."
+                      : unavailable
+                      ? "One course limit reached"
                       : "Enroll Now →"}
                   </button>
+                  {enrolled && (
+                    <button
+                      onClick={() =>
+                        navigate(`/payment/${encodeURIComponent(course.slug)}`)
+                      }
+                      className="mt-3 w-full rounded-lg bg-white py-3 font-semibold text-[#440D70] ring-1 ring-[#440D70] transition-colors hover:bg-purple-50"
+                    >
+                      Payment
+                    </button>
+                  )}
                 </div>
               </div>
             );

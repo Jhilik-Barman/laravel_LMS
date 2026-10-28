@@ -10,25 +10,25 @@ export default defineConfig({
 
     proxy: {
       '/auth': {
-        target: 'http://127.0.0.1:8001',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => `/api${path}`,
       },
 
       '/banners': {
-        target: 'http://127.0.0.1:8001',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => `/api${path}`,
       },
 
       '/courses': {
-        target: 'http://127.0.0.1:8001',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => `/api${path}`,
       },
 
       '/user': {
-        target: 'http://127.0.0.1:8001',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => `/api${path}`,
       },
