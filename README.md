@@ -111,6 +111,16 @@ VITE_API_URL=
 Profile photos are stored on Laravel's public disk. Create the public storage
 symlink after setting up the backend with `php artisan storage:link`.
 
+## Course Payment QR Codes
+
+The payment page generates a UPI QR in the browser for the selected course,
+using that course's configured fee and `corporatesguide@idfcbank`. A new QR is
+generated every two minutes, and students can also request one manually.
+
+The countdown only refreshes the QR displayed on the page. A static UPI QR
+cannot be remotely disabled or payment-verified; a previously scanned QR may
+still be payable after the timer expires. The site does not confirm payments.
+
 ## Notes
 
 This project is a Laravel-based LMS with a React frontend. It is not built with Python or MongoDB; the current project uses PHP + Laravel and MySQL for the backend data layer.
