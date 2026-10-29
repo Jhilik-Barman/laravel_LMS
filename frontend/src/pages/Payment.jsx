@@ -1,7 +1,3 @@
 export default function Payment() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-4 text-gray-900">
-      <h1 className="text-2xl font-semibold">Payment</h1>
-    </main>
-  );
+  return <main className="min-h-[70vh] bg-white" aria-label="Payment page" />;
 }
