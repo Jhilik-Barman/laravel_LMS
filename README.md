@@ -101,10 +101,11 @@ Frontend will run at:
 http://localhost:5173
 ```
 
-Make sure the frontend API URL points to the Laravel backend:
+For local development, leave `VITE_API_URL` empty so the Vite proxy forwards
+frontend API requests to Laravel:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=
 ```
 
 Profile photos are stored on Laravel's public disk. Create the public storage
