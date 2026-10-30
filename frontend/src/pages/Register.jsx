@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { getApiErrorMessage } from '../utils/apiError'
 
 export default function Register() {
   const location = useLocation()
@@ -38,7 +39,7 @@ export default function Register() {
       login(access_token, user)
       navigate('/courses')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed')
+      setError(getApiErrorMessage(err, 'Registration failed. Please try again.'))
     } finally {
       setLoading(false)
     }
