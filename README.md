@@ -101,14 +101,25 @@ Frontend will run at:
 http://localhost:5173
 ```
 
-Make sure the frontend API URL points to the Laravel backend:
+For local development, leave `VITE_API_URL` empty so the Vite proxy forwards
+frontend API requests to Laravel:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=
 ```
 
 Profile photos are stored on Laravel's public disk. Create the public storage
 symlink after setting up the backend with `php artisan storage:link`.
+
+## Course Payment QR Codes
+
+The payment page generates a UPI QR in the browser for the selected course,
+using that course's configured fee and `corporatesguide@idfcbank`. A new QR is
+generated every two minutes, and students can also request one manually.
+
+The countdown only refreshes the QR displayed on the page. A static UPI QR
+cannot be remotely disabled or payment-verified; a previously scanned QR may
+still be payable after the timer expires. The site does not confirm payments.
 
 ## Notes
 

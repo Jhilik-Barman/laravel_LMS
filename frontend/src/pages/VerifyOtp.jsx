@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { getApiErrorMessage } from '../utils/apiError'
 
 export default function VerifyOtp() {
   const location = useLocation()
@@ -33,7 +34,7 @@ export default function VerifyOtp() {
         navigate('/courses')
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid OTP')
+      setError(getApiErrorMessage(err, 'Unable to verify OTP. Please try again.'))
     } finally {
       setLoading(false)
     }
@@ -45,7 +46,7 @@ export default function VerifyOtp() {
       await api.post('/auth/send-otp', { email })
       setError('A new OTP has been sent.')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Could not resend OTP')
+      setError(getApiErrorMessage(err, 'Unable to resend OTP. Please try again.'))
     }
   }
 

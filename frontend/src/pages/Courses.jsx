@@ -121,6 +121,10 @@ export default function Courses() {
                     {course.title}
                   </h2>
 
+                  <p className="mb-2 text-lg font-bold text-[#440D70] dark:text-purple-300">
+                    ₹{Number(course.fee).toLocaleString("en-IN")}
+                  </p>
+
                   <p className="text-gray-500 text-sm leading-6 flex-1">
                     {course.description}
                   </p>
