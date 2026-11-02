@@ -23,13 +23,15 @@ class CourseFlowTest extends TestCase
                 'title',
                 'description',
                 'duration',
+                'fee',
+                'technologies',
                 'certificate',
                 'placement_support',
             ],
         ]);
     }
 
-    public function test_user_can_enroll_in_a_course(): void
+    public function test_course_enrollment_is_not_recorded_before_payment_verification(): void
     {
         $user = User::factory()->create([
             'email' => 'student@example.com',
@@ -41,11 +43,14 @@ class CourseFlowTest extends TestCase
             'course_slug' => 'frontend-development',
         ]);
 
-        $response->assertOk();
-        $this->assertContains('frontend-development', $user->fresh()->enrolled_courses ?? []);
+        $response->assertStatus(409)
+            ->assertJson([
+                'message' => 'Enrollment is not recorded because UPI QR payments cannot be automatically verified.',
+            ]);
+        $this->assertSame([], $user->fresh()->enrolled_courses ?? []);
     }
 
-    public function test_user_cannot_enroll_in_a_second_course(): void
+    public function test_existing_enrollment_is_unchanged_when_payment_cannot_be_verified(): void
     {
         $user = User::factory()->create([
             'enrolled_courses' => ['frontend-development'],
@@ -57,7 +62,7 @@ class CourseFlowTest extends TestCase
 
         $response->assertStatus(409)
             ->assertJson([
-                'message' => 'You can only enroll in one course.',
+                'message' => 'Enrollment is not recorded because UPI QR payments cannot be automatically verified.',
             ]);
         $this->assertSame(['frontend-development'], $user->fresh()->enrolled_courses);
     }

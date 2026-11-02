@@ -25,4 +25,23 @@ class CourseFeesTest extends TestCase
             ->assertJsonPath('5.slug', 'digital-marketing')
             ->assertJsonPath('5.fee', 1200);
     }
+
+    public function test_courses_include_detailed_content_for_the_details_view(): void
+    {
+        $courses = $this->getJson('/api/courses')
+            ->assertOk()
+            ->json();
+
+        foreach ($courses as $course) {
+            $this->assertIsArray($course['technologies']);
+            $this->assertNotEmpty($course['technologies']);
+            $this->assertNotEmpty($course['duration']);
+            $this->assertNotEmpty($course['description']);
+
+            foreach (['syllabus', 'key_features', 'learning_outcomes', 'benefits'] as $section) {
+                $this->assertIsArray($course[$section], "{$course['slug']} is missing {$section}.");
+                $this->assertNotEmpty($course[$section], "{$course['slug']} has no {$section}.");
+            }
+        }
+    }
 }

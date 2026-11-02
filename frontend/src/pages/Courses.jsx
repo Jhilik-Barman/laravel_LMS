@@ -7,10 +7,8 @@ export default function Courses() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [enrollingSlug, setEnrollingSlug] = useState(null);
-  const [enrollError, setEnrollError] = useState("");
 
-  const { user, isLoggedIn, setUser } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     api
@@ -19,51 +17,17 @@ export default function Courses() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleEnroll = async (slug) => {
-    if (!isLoggedIn) return;
-
-    setEnrollError("");
-    setEnrollingSlug(slug);
-
-    try {
-      const res = await api.post("/user/enroll", {
-        course_slug: slug,
-      });
-
-      setUser(res.data);
-    } catch (err) {
-      setEnrollError(err.response?.data?.message || "Could not enroll");
-    } finally {
-      setEnrollingSlug(null);
-    }
-  };
-
   const isEnrolled = (slug) =>
     user?.enrolled_courses?.includes(slug);
-  const hasEnrollment = (user?.enrolled_courses?.length ?? 0) > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       {/* Heading */}
       <div className="text-center mb-12">
-        <span className="inline-block px-4 py-1 rounded-full bg-brand-light text-brand-purple text-xs font-semibold mb-3">
-          EXPLORE PROGRAMS
-        </span>
-
-        <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-          Our Courses
+        <h1 className="inline-block rounded-full bg-brand-light px-6 py-3 text-3xl font-bold tracking-tight text-brand-purple sm:text-4xl lg:text-5xl">
+          Explore Our Programmes
         </h1>
-
-        <p className="text-gray-500">
-          Choose a course and start your learning journey today.
-        </p>
       </div>
-
-      {enrollError && (
-        <p role="alert" className="mb-6 text-center text-sm text-red-600">
-          {enrollError}
-        </p>
-      )}
 
       {/* Loading */}
       {loading ? (
@@ -79,7 +43,6 @@ export default function Courses() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.map((course) => {
             const enrolled = isEnrolled(course.slug);
-            const unavailable = hasEnrollment && !enrolled;
 
             return (
               <div
@@ -121,10 +84,6 @@ export default function Courses() {
                     {course.title}
                   </h2>
 
-                  <p className="mb-2 text-lg font-bold text-[#440D70] dark:text-purple-300">
-                    ₹{Number(course.fee).toLocaleString("en-IN")}
-                  </p>
-
                   <p className="text-gray-500 text-sm leading-6 flex-1">
                     {course.description}
                   </p>
@@ -148,38 +107,14 @@ export default function Courses() {
                   </div>
 
                   <button
-                    onClick={() => handleEnroll(course.slug)}
-                    disabled={
-                      enrolled ||
-                      unavailable ||
-                      enrollingSlug !== null
+                    type="button"
+                    onClick={() =>
+                      navigate(`/courses/${encodeURIComponent(course.slug)}`)
                     }
-                    className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed ${
-                      enrolled
-                        ? "bg-emerald-100 text-emerald-700"
-                        : unavailable
-                        ? "bg-gray-100 text-gray-500"
-                        : "bg-gradient-to-r from-[#440D70] to-indigo-600 text-white hover:opacity-90 hover:shadow-lg"
-                    }`}
+                    className="mt-6 w-full rounded-lg bg-gradient-to-r from-[#440D70] to-indigo-600 py-3 font-semibold text-white transition-all duration-300 hover:opacity-90 hover:shadow-lg"
                   >
-                    {enrolled
-                      ? "Enrolled ✓"
-                      : enrollingSlug === course.slug
-                      ? "Enrolling..."
-                      : unavailable
-                      ? "One course limit reached"
-                      : "Enroll Now →"}
+                    View Details →
                   </button>
-                  {enrolled && (
-                    <button
-                      onClick={() =>
-                        navigate(`/payment/${encodeURIComponent(course.slug)}`)
-                      }
-                      className="mt-3 w-full rounded-lg bg-white py-3 font-semibold text-[#440D70] ring-1 ring-[#440D70] transition-colors hover:bg-purple-50"
-                    >
-                      Payment
-                    </button>
-                  )}
                 </div>
               </div>
             );

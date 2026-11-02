@@ -8,6 +8,10 @@ const api = axios.create({
 
 // Attach JWT token to every request if present
 api.interceptors.request.use((config) => {
+  if (config.url === '/courses') {
+    config.url = '/api/courses'
+  }
+
   const token = localStorage.getItem('lms_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

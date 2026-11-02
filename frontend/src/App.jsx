@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import VerifyOtp from "./pages/VerifyOtp";
 import Register from "./pages/Register";
 import Courses from "./pages/Courses";
+import CourseDetails from "./pages/CourseDetails";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 
@@ -56,6 +57,14 @@ export default function App() {
           element={
             <RequireAuth>
               <Courses />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/courses/:courseSlug"
+          element={
+            <RequireAuth>
+              <CourseDetails />
             </RequireAuth>
           }
         />
