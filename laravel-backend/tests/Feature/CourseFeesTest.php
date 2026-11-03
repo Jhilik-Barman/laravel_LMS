@@ -44,4 +44,28 @@ class CourseFeesTest extends TestCase
             }
         }
     }
+
+    public function test_each_course_uses_its_matching_course_image(): void
+    {
+        $courses = $this->getJson('/api/courses')
+            ->assertOk()
+            ->json();
+
+        $expectedImages = [
+            'frontend-development' => '/images/frontend-course.png',
+            'backend-development' => '/images/backend-course.png',
+            'full-stack-development' => '/images/fullstack-course.png',
+            'data-science' => '/images/data-science-course.png',
+            'ui-ux-design' => '/images/ui-ux-course.png',
+            'digital-marketing' => '/images/digital-marketing-course.png',
+        ];
+
+        foreach ($courses as $course) {
+            $this->assertSame(
+                $expectedImages[$course['slug']],
+                $course['image'],
+                "Unexpected image for {$course['slug']}.",
+            );
+        }
+    }
 }

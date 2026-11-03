@@ -39,7 +39,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/frontend-course.png',
             ],
             [
                 'slug' => 'backend-development',
@@ -73,7 +73,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/backend-course.png',
             ],
             [
                 'slug' => 'full-stack-development',
@@ -109,7 +109,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/fullstack-course.png',
             ],
             [
                 'slug' => 'data-science',
@@ -143,7 +143,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/data-science-course.png',
             ],
             [
                 'slug' => 'ui-ux-design',
@@ -176,7 +176,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => false,
-                'image' => 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/ui-ux-course.png',
             ],
             [
                 'slug' => 'digital-marketing',
@@ -209,7 +209,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => false,
-                'image' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+                'image' => '/images/digital-marketing-course.png',
             ],
         ];
     }

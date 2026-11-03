@@ -24,7 +24,7 @@ export default function Courses() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       {/* Heading */}
       <div className="text-center mb-12">
-        <h1 className="inline-block rounded-full bg-brand-light px-6 py-3 text-3xl font-bold tracking-tight text-brand-purple sm:text-4xl lg:text-5xl">
+        <h1 className="inline-block rounded-full bg-brand-light px-6 py-3 text-2xl font-bold tracking-tight text-brand-purple sm:text-3xl lg:text-4xl">
           Explore Our Programmes
         </h1>
       </div>
@@ -50,7 +50,7 @@ export default function Courses() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
               >
                 {/* Image */}
-                <div className="relative h-56 bg-gray-100 dark:bg-gray-900 flex items-center justify-center overflow-hidden">
+                <div className="relative h-56 flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-900">
                   {course.image ? (
                     <img
                       src={course.image}
