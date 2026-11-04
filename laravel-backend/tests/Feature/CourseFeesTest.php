@@ -52,8 +52,8 @@ class CourseFeesTest extends TestCase
             ->json();
 
         $expectedImages = [
-            'frontend-development' => '/images/frontend-course.png',
-            'backend-development' => '/images/backend-course.png',
+            'frontend-development' => '/images/frontend-course-banner.png',
+            'backend-development' => '/images/backend-course-banner.png',
             'full-stack-development' => '/images/fullstack-course.png',
             'data-science' => '/images/data-science-course.png',
             'ui-ux-design' => '/images/ui-ux-course.png',

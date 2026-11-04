@@ -39,7 +39,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => '/images/frontend-course.png',
+                'image' => '/images/frontend-course-banner.png',
             ],
             [
                 'slug' => 'backend-development',
@@ -73,7 +73,7 @@ final class CourseCatalog
                 ],
                 'certificate' => true,
                 'placement_support' => true,
-                'image' => '/images/backend-course.png',
+                'image' => '/images/backend-course-banner.png',
             ],
             [
                 'slug' => 'full-stack-development',
