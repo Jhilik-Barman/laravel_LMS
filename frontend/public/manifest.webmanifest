@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "Corporates Guide - LMS",
+  "short_name": "Corporates LMS",
+  "description": "Learn practical, industry-relevant skills with Corporates Guide.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#440D70",
+  "icons": [
+    {
+      "src": "/icons/lms-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/lms-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

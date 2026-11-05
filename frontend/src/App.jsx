@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SessionWarningModal from "./components/SessionWarningModal";
@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import VerifyOtp from "./pages/VerifyOtp";
 import Register from "./pages/Register";
 import Courses from "./pages/Courses";
+import CourseDetails from "./pages/CourseDetails";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 
@@ -30,6 +31,32 @@ function ScrollToTop() {
   return null;
 }
 
+function PreventBrowserBack() {
+  const location = useLocation();
+  const currentUrl = useRef("");
+
+  currentUrl.current = `${location.pathname}${location.search}${location.hash}`;
+
+  useEffect(() => {
+    const restoreCurrentRoute = () => {
+      window.history.pushState(
+        window.history.state,
+        "",
+        currentUrl.current,
+      );
+    };
+
+    restoreCurrentRoute();
+    window.addEventListener("popstate", restoreCurrentRoute, true);
+
+    return () => {
+      window.removeEventListener("popstate", restoreCurrentRoute, true);
+    };
+  }, []);
+
+  return null;
+}
+
 export default function App() {
   const { showWarning, secondsLeft, continueSession } = useSessionTimeout();
   const location = useLocation();
@@ -37,6 +64,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <PreventBrowserBack />
       <Navbar />
       <SessionWarningModal
         visible={showWarning}
@@ -56,6 +84,14 @@ export default function App() {
           element={
             <RequireAuth>
               <Courses />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/courses/:courseSlug"
+          element={
+            <RequireAuth>
+              <CourseDetails />
             </RequireAuth>
           }
         />
