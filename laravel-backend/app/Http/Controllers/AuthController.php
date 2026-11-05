@@ -18,6 +18,10 @@ class AuthController extends Controller
 
     public function sendOtp(Request $request)
     {
+        $request->merge([
+            'email' => trim((string) $request->input('email', '')),
+        ]);
+
         $request->validate([
             'email' => 'required|email',
         ]);
@@ -78,6 +82,10 @@ $this->splunk->send(
 
     public function verifyOtp(Request $request)
     {
+        $request->merge([
+            'email' => trim((string) $request->input('email', '')),
+        ]);
+
         $request->validate([
             'email' => 'required|email',
             'otp' => 'required|digits:6',
@@ -174,6 +182,10 @@ if (!$otpRecord) {
 
     public function register(Request $request)
     {
+        $request->merge([
+            'email' => trim((string) $request->input('email', '')),
+        ]);
+
         // Validate registration data
         $request->validate([
             'email' => 'required|email',

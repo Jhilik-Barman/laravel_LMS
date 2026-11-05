@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../utils/api'
+import { getApiErrorMessage } from '../utils/apiError'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -12,11 +13,14 @@ export default function Login() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    const normalizedEmail = e.currentTarget.elements.email.value.trim()
+    setEmail(normalizedEmail)
+
     try {
-      await api.post('/auth/send-otp', { email })
-      navigate('/verify-otp', { state: { email } })
+      await api.post('/auth/send-otp', { email: normalizedEmail })
+      navigate('/verify-otp', { state: { email: normalizedEmail } })
     } catch (err) {
-      setError(err.response?.data?.detail || 'Something went wrong. Please try again.')
+      setError(getApiErrorMessage(err, 'Unable to send OTP. Please try again.'))
     } finally {
       setLoading(false)
     }
@@ -32,11 +36,17 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
+            name="email"
             type="email"
             required
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={(e) => {
+              const normalizedEmail = e.target.value.trim()
+              e.target.value = normalizedEmail
+              setEmail(normalizedEmail)
+            }}
             className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
           />
 

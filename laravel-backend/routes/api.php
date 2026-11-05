@@ -2,9 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,34 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/user/enroll', function (Request $request) {
-        $data = $request->validate([
-            'course_slug' => ['required', 'string', 'max:255'],
-        ]);
-
-        $slug = trim($data['course_slug']);
-
-        return DB::transaction(function () use ($request, $slug) {
-            $user = User::query()
-                ->whereKey($request->user()->getKey())
-                ->lockForUpdate()
-                ->firstOrFail();
-            $enrolled = $user->enrolled_courses ?? [];
-
-            if (in_array($slug, $enrolled, true)) {
-                return response()->json($user);
-            }
-
-            if ($enrolled !== []) {
-                return response()->json([
-                    'message' => 'You can only enroll in one course.',
-                ], 409);
-            }
-
-            $user->enrolled_courses = [$slug];
-            $user->save();
-
-            return response()->json($user->fresh());
-        });
+        return response()->json([
+            'message' => 'Enrollment is not recorded because UPI QR payments cannot be automatically verified.',
+        ], 409);
     });
 });
 
