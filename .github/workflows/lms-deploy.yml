@@ -1,5 +1,5 @@
 
-name: LMS Deployment Test
+name: LMS Deployment
 
 on:
   push:
@@ -11,13 +11,23 @@ permissions:
   contents: read
 
 jobs:
-  runner-test:
+  deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Check EC2 Runner
+      - name: Checkout Deployment Branch
+        uses: actions/checkout@v4
+
+      - name: Verify EC2 Environment
         run: |
-          echo "GitHub Actions connected to EC2"
+          echo "Connected to EC2"
           whoami
           hostname
           pwd
+          echo "Repository checkout successful"
+          ls -lah
+
+
+          echo "Repository checkout successful"
+          ls -lah
+
