@@ -1,0 +1,23 @@
+
+name: LMS Deployment Test
+
+on:
+  push:
+    branches:
+      - deployment
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Check EC2 Runner
+        run: |
+          echo "GitHub Actions connected to EC2"
+          whoami
+          hostname
+          pwd
