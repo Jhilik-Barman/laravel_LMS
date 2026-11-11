@@ -3,15 +3,9 @@ import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const { isLoggedIn, user, logout } = useAuth()
+  const { isLoggedIn, user } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const handleLogout = () => {
-    logout()
-    setMenuOpen(false)
-    navigate('/login')
-  }
 
   const closeMenu = () => setMenuOpen(false)
 
@@ -66,12 +60,6 @@ export default function Navbar() {
                   <span className="hidden lg:inline">{user?.name || user?.email}</span>
                 </div>
               </NavLink>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
-              >
-                Logout
-              </button>
             </div>
           ) : (
             <button
@@ -121,12 +109,6 @@ export default function Navbar() {
                   <span>{user?.name || user?.email}</span>
                 </div>
               </NavLink>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
-              >
-                Logout
-              </button>
             </div>
           ) : (
             <button
