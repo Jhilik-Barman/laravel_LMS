@@ -1,0 +1,33 @@
+
+name: LMS Deployment
+
+on:
+  push:
+    branches:
+      - deployment
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Deployment Branch
+        uses: actions/checkout@v4
+
+      - name: Verify EC2 Environment
+        run: |
+          echo "Connected to EC2"
+          whoami
+          hostname
+          pwd
+          echo "Repository checkout successful"
+          ls -lah
+
+
+          echo "Repository checkout successful"
+          ls -lah
+
