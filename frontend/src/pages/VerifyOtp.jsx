@@ -31,7 +31,7 @@ export default function VerifyOtp() {
         navigate('/register', { state: { email, access_token } })
       } else {
         login(access_token, user)
-        navigate('/courses')
+        navigate(user?.phone ? '/' : '/profile')
       }
     } catch (err) {
       setError(getApiErrorMessage(err, 'Unable to verify OTP. Please try again.'))
