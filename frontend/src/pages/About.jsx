@@ -1,8 +1,37 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../utils/api'
+import { getApiErrorMessage } from '../utils/apiError'
+
+function useCountUp(target) {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (target === null) return undefined
+    if (target === 0) {
+      setCount(0)
+      return undefined
+    }
+
+    const startTime = window.performance.now()
+    let frameId
+
+    const updateCount = (time) => {
+      const progress = Math.min((time - startTime) / 600, 1)
+      setCount(Math.floor(progress * target))
+      if (progress < 1) frameId = window.requestAnimationFrame(updateCount)
+    }
+
+    frameId = window.requestAnimationFrame(updateCount)
+    return () => window.cancelAnimationFrame(frameId)
+  }, [target])
+
+  return count
+}
 
 const STATS = [
-  { value: '5+', label: 'Courses Offered' },
-  { value: '1000+', label: 'Students Trained' },
+  { key: 'courses', label: 'Courses Offered' },
+  { key: 'students', label: 'Students Trained' },
   { value: '100%', label: 'Placement Support' },
   { value: '2-3', label: 'Months per Course' },
 ]
@@ -41,6 +70,37 @@ const OFFERINGS = [
 ]
 
 export default function About() {
+  const [courseCount, setCourseCount] = useState(null)
+  const [courseError, setCourseError] = useState('')
+  const displayedCourseCount = useCountUp(courseCount)
+  const displayedStudentCount = useCountUp(1000)
+
+  useEffect(() => {
+    let active = true
+
+    api.get('/courses')
+      .then((response) => {
+        if (!Array.isArray(response.data)) {
+          if (active) setCourseError('Could not load the course count.')
+          return
+        }
+
+        if (active) {
+          setCourseCount(response.data.length)
+          setCourseError('')
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setCourseError(getApiErrorMessage(error, 'Could not load the course count.'))
+        }
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
   return (
     <div>
       {/* Hero section */}
@@ -62,8 +122,19 @@ export default function About() {
         <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100 dark:divide-gray-700">
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center py-6 px-2">
-              <p className="text-2xl sm:text-3xl font-bold text-brand-purple dark-keep-color">{stat.value}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-brand-purple dark-keep-color">
+                {stat.key === 'courses'
+                  ? courseCount === null
+                    ? (courseError ? '—' : '...')
+                    : `${displayedCourseCount}+`
+                  : stat.key === 'students'
+                    ? `${displayedStudentCount}+`
+                  : stat.value}
+              </p>
               <p className="text-xs sm:text-sm text-gray-500 dark-keep-color mt-1">{stat.label}</p>
+              {stat.key === 'courses' && courseError && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{courseError}</p>
+              )}
             </div>
           ))}
         </div>
