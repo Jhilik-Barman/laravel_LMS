@@ -21,11 +21,10 @@ Route::middleware('auth:sanctum')->group(function () {
         $user = $request->user();
 
         $data = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'dob' => ['sometimes', 'nullable', 'date'],
-            'organization' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'organization_type' => ['sometimes', 'nullable', 'in:college,company'],
-            'phone' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'dob' => ['sometimes', 'required', 'date'],
+            'organization' => ['sometimes', 'required', 'string', 'max:255'],
+            'organization_type' => ['sometimes', 'required', 'in:college,company'],
+            'phone' => ['missing'],
             'profile_picture' => ['sometimes', 'nullable', 'string'],
         ]);
 
