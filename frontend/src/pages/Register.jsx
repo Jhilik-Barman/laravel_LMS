@@ -37,7 +37,7 @@ export default function Register() {
       const res = await api.post('/auth/register', { email, ...form })
       const { access_token, user } = res.data
       login(access_token, user)
-      navigate('/courses')
+      navigate('/', { state: { showWelcomeToast: true } })
     } catch (err) {
       setError(getApiErrorMessage(err, 'Registration failed. Please try again.'))
     } finally {
@@ -54,37 +54,88 @@ export default function Register() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="name" required placeholder="Full Name"
-            value={form.name} onChange={handleChange}
-            className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
-          />
-          <input
-            name="dob" type="date" required
-            value={form.dob} onChange={handleChange}
-            className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
-          />
+          <div>
+            <label htmlFor="register-name" className="mb-1.5 block text-sm font-medium text-slate-700">
+              Full Name <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="register-name"
+              name="name"
+              required
+              autoComplete="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
+            />
+          </div>
+          <div>
+            <label htmlFor="register-dob" className="mb-1.5 block text-sm font-medium text-slate-700">
+              Date of Birth <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="register-dob"
+              name="dob"
+              type="date"
+              required
+              value={form.dob}
+              onChange={handleChange}
+              className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
+            />
+          </div>
 
-          <select
-            name="organization_type" value={form.organization_type} onChange={handleChange}
-            className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
-          >
-            <option value="college">College</option>
-            <option value="company">Company</option>
-          </select>
+          <div>
+            <label htmlFor="register-organization-type" className="mb-1.5 block text-sm font-medium text-slate-700">
+              Account Type <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <select
+              id="register-organization-type"
+              name="organization_type"
+              required
+              value={form.organization_type}
+              onChange={handleChange}
+              className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
+            >
+              <option value="college">College</option>
+              <option value="company">Company</option>
+            </select>
+          </div>
 
-          <input
-            name="organization" required
-            placeholder={form.organization_type === 'college' ? 'College Name' : 'Company Name'}
-            value={form.organization} onChange={handleChange}
-            className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
-          />
+          <div>
+            <label htmlFor="register-organization" className="mb-1.5 block text-sm font-medium text-slate-700">
+              {form.organization_type === 'college' ? 'College Name' : 'Company Name'}{' '}
+              <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="register-organization"
+              name="organization"
+              required
+              placeholder={form.organization_type === 'college' ? 'College Name' : 'Company Name'}
+              value={form.organization}
+              onChange={handleChange}
+              className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
+            />
+          </div>
 
-          <input
-            name="phone" placeholder="Phone Number (optional)"
-            value={form.phone} onChange={handleChange}
-            className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
-          />
+          <div>
+            <label htmlFor="register-phone" className="mb-1.5 block text-sm font-medium text-slate-700">
+              Phone Number <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="register-phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              maxLength={20}
+              pattern="(?=(?:.*[0-9]){7,15}$)\\+?[0-9\\s().-]{7,20}"
+              title="Enter a phone number containing 7 to 15 digits."
+              required
+              placeholder="Phone Number"
+              value={form.phone}
+              onChange={handleChange}
+              className="w-full border rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-indigo"
+            />
+          </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 

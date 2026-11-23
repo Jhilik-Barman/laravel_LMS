@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import Cropper from 'react-easy-crop'
 import api from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { getApiErrorMessage } from '../utils/apiError'
+import WelcomeToast from '../components/WelcomeToast'
 
 const createCroppedImage = (imageUrl, pixelCrop) => new Promise((resolve, reject) => {
   const image = new Image()
@@ -56,13 +58,11 @@ const formatDateOfBirth = (value) => {
 export default function Profile() {
   const { user, setUser, logout } = useAuth()
   const navigate = useNavigate()
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(!user?.phone)
   const [form, setForm] = useState({
-    name: user?.name || '',
     dob: getDateInputValue(user?.dob),
     organization: user?.organization || '',
     organization_type: user?.organization_type || 'college',
-    phone: user?.phone || '',
   })
   const [saving, setSaving] = useState(false)
   const [pictureSaving, setPictureSaving] = useState(false)
@@ -139,7 +139,7 @@ export default function Profile() {
       setUser(res.data)
       setEditing(false)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Could not save changes')
+      setError(getApiErrorMessage(err, 'Could not save changes'))
     } finally {
       setSaving(false)
     }
@@ -153,8 +153,10 @@ export default function Profile() {
   if (!user) return null
 
   return (
-    <main className="min-h-[65vh] bg-gradient-to-b from-indigo-50/80 via-slate-50 to-white px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-2xl">
+    <>
+      <WelcomeToast user={user} />
+      <main className="min-h-[65vh] bg-gradient-to-b from-indigo-50/80 via-slate-50 to-white px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mx-auto max-w-2xl">
         <section className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-indigo-50/80 to-violet-100/70 shadow-xl shadow-indigo-950/[0.09]">
           <div className="h-1.5 bg-gradient-to-r from-brand-purple via-indigo-500 to-sky-400" />
 
@@ -230,31 +232,41 @@ export default function Profile() {
                   </div>
                   <div>
                     <label htmlFor="profile-name" className="mb-1.5 block text-sm font-medium text-slate-700">Full name</label>
-                    <input id="profile-name" name="name" autoComplete="name" placeholder="Full name" value={form.name} onChange={handleChange}
-                      className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100" />
+                    <input id="profile-name" value={user.name} readOnly
+                      className="w-full min-w-0 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-left text-slate-500" />
+                    <p className="mt-1.5 text-xs text-slate-500">Name cannot be changed.</p>
                   </div>
                   <div>
-                    <label htmlFor="profile-dob" className="mb-1.5 block text-sm font-medium text-slate-700">Date of birth</label>
-                    <input id="profile-dob" name="dob" type="date" value={form.dob} onChange={handleChange}
+                    <label htmlFor="profile-dob" className="mb-1.5 block text-sm font-medium text-slate-700">
+                      Date of birth <span className="text-red-600" aria-hidden="true">*</span>
+                    </label>
+                    <input id="profile-dob" name="dob" type="date" value={form.dob} onChange={handleChange} required
                       className="block w-full min-w-0 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-900 outline-none [color-scheme:light] focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100" />
                   </div>
                   <div>
-                    <label htmlFor="profile-organization-type" className="mb-1.5 block text-sm font-medium text-slate-700">Account type</label>
-                    <select id="profile-organization-type" name="organization_type" value={form.organization_type} onChange={handleChange}
+                    <label htmlFor="profile-organization-type" className="mb-1.5 block text-sm font-medium text-slate-700">
+                      Account type <span className="text-red-600" aria-hidden="true">*</span>
+                    </label>
+                    <select id="profile-organization-type" name="organization_type" value={form.organization_type} onChange={handleChange} required
                       className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-900 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100">
                       <option value="college">College</option>
                       <option value="company">Company</option>
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="profile-organization" className="mb-1.5 block text-sm font-medium text-slate-700">College or company</label>
-                    <input id="profile-organization" name="organization" autoComplete="organization" placeholder="College or company" value={form.organization} onChange={handleChange}
+                    <label htmlFor="profile-organization" className="mb-1.5 block text-sm font-medium text-slate-700">
+                      College or company <span className="text-red-600" aria-hidden="true">*</span>
+                    </label>
+                    <input id="profile-organization" name="organization" autoComplete="organization" placeholder="College or company" value={form.organization} onChange={handleChange} required
                       className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100" />
                   </div>
                   <div>
-                    <label htmlFor="profile-phone" className="mb-1.5 block text-sm font-medium text-slate-700">Phone number</label>
-                    <input id="profile-phone" name="phone" type="tel" autoComplete="tel" placeholder="Phone number" value={form.phone} onChange={handleChange}
-                      className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100" />
+                    <label htmlFor="profile-phone" className="mb-1.5 block text-sm font-medium text-slate-700">
+                      Phone number
+                    </label>
+                    <input id="profile-phone" value={user.phone || 'Not provided'} readOnly
+                      className="w-full min-w-0 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-left text-slate-500" />
+                    <p className="mt-1.5 text-xs text-slate-500">Phone number cannot be changed.</p>
                   </div>
                 </div>
 
@@ -291,10 +303,10 @@ export default function Profile() {
             )}
           </div>
         </section>
-      </div>
+        </div>
 
-      {cropImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4" role="dialog" aria-modal="true" aria-labelledby="crop-photo-title">
+        {cropImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4" role="dialog" aria-modal="true" aria-labelledby="crop-photo-title">
           <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
             <h2 id="crop-photo-title" className="text-xl font-bold text-slate-900">Crop profile photo</h2>
             <p className="mt-1 text-sm text-slate-500">Drag the image and adjust the zoom to choose how it appears.</p>
@@ -342,8 +354,9 @@ export default function Profile() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-    </main>
+          </div>
+        )}
+      </main>
+    </>
   )
 }

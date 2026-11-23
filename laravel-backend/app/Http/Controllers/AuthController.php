@@ -184,31 +184,30 @@ if (!$otpRecord) {
     {
         $request->merge([
             'email' => trim((string) $request->input('email', '')),
+            'phone' => trim((string) $request->input('phone', '')),
         ]);
 
         // Validate registration data
-        $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string|max:255',
-            'dob' => 'required|date',
-            'organization' => 'required|string|max:255',
-            'organization_type' => 'required|in:college,company',
-            'phone' => 'nullable|string|max:20',
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
+            'dob' => ['required', 'date'],
+            'organization' => ['required', 'string', 'max:255'],
+            'organization_type' => ['required', 'in:college,company'],
+            'phone' => ['required', 'string', 'max:20', 'regex:/^(?=(?:.*\d){7,15}$)\+?[0-9\s().-]+$/'],
         ]);
 
-        // Create or update user
-        $user = User::updateOrCreate(
-            [
-                'email' => $request->email,
-            ],
-            [
-                'name' => $request->name,
-                'dob' => $request->dob,
-                'organization' => $request->organization,
-                'organization_type' => $request->organization_type,
-                'phone' => $request->phone,
-            ]
-        );
+        $user = User::firstOrNew([
+            'email' => $data['email'],
+        ]);
+        $user->fill([
+            'name' => $user->exists ? $user->name : $data['name'],
+            'dob' => $data['dob'],
+            'organization' => $data['organization'],
+            'organization_type' => $data['organization_type'],
+            'phone' => $user->exists ? $user->phone : $data['phone'],
+        ]);
+        $user->save();
 
         // Create login token
         $accessToken = $user
